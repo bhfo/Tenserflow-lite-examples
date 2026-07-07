@@ -33,7 +33,7 @@ from tensorflow_examples.lite.model_maker.third_party.efficientdet.dataset impor
 from tensorflow_examples.lite.model_maker.third_party.efficientdet.dataset import tfrecord_util
 
 # A workaround to avoid a JPEG image being identified as MPO.
-JpegImagePlugin._getmp = lambda: None  # pylint: disable=protected-access
+JpegImagePlugin._getmp = lambda: None  # pylint: disable=protected-access  # pyrefly: ignore[bad-assignment]
 
 # Suffix of the annotations json file name and the meta data file name.
 ANN_JSON_FILE_SUFFIX = '_annotations.json'

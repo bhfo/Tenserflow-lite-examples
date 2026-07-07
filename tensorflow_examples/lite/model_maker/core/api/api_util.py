@@ -264,7 +264,7 @@ def write_packages(
 
     # Add deprecated imports for backward compatiblity..
     if package_name in deprecated_imports:
-      lines.append(deprecated_imports[package_name])
+      lines.append(deprecated_imports[package_name])  # pyrefly: ignore[bad-argument-type]
 
     # For base package add __version__.
     if package_name == ROOT_PACKAGE_KEY:

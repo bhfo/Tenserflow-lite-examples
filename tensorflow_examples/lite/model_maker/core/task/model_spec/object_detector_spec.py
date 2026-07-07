@@ -96,7 +96,7 @@ class ExportModel(efficientdet_keras.EfficientDetModel):
                                          config.mean_rgb, config.stddev_rgb,
                                          self.pre_mode)
     # Network.
-    outputs = self.model(inputs, training=False)
+    outputs = self.model(inputs, training=False)  # pyrefly: ignore[not-callable]
 
     # Postprocess for detection.
     det_outputs = self._postprocess(outputs[0], outputs[1], scales,
@@ -320,12 +320,12 @@ class EfficientDetModelSpec(object):
     Returns:
       A dict contains AP metrics.
     """
-    evaluator, label_map = self._get_evaluator_and_label_map(json_file)
+    evaluator, label_map = self._get_evaluator_and_label_map(json_file)  # pyrefly: ignore[bad-argument-type]
     dataset = dataset.take(steps)
 
     @tf.function
     def _get_detections(images, labels):
-      cls_outputs, box_outputs = model(images, training=False)
+      cls_outputs, box_outputs = model(images, training=False)  # pyrefly: ignore[not-callable]
       detections = postprocess.generate_detections(self.config, cls_outputs,
                                                    box_outputs,
                                                    labels['image_scales'],
@@ -342,7 +342,7 @@ class EfficientDetModelSpec(object):
       progbar.update(i + 1)
     print()
 
-    metric_dict = self._get_metric_dict(evaluator, label_map)
+    metric_dict = self._get_metric_dict(evaluator, label_map)  # pyrefly: ignore[bad-argument-type]
     return metric_dict
 
   def evaluate_tflite(self,
@@ -367,7 +367,7 @@ class EfficientDetModelSpec(object):
     """
     # TODO(b/182441458): Use the task library for evaluation instead once it
     # supports python interface.
-    evaluator, label_map = self._get_evaluator_and_label_map(json_file)
+    evaluator, label_map = self._get_evaluator_and_label_map(json_file)  # pyrefly: ignore[bad-argument-type]
     dataset = dataset.take(steps)
 
     lite_runner = eval_tflite.LiteRunner(tflite_filepath, only_network=False)
@@ -397,7 +397,7 @@ class EfficientDetModelSpec(object):
       progbar.update(i + 1)
     print()
 
-    metric_dict = self._get_metric_dict(evaluator, label_map)
+    metric_dict = self._get_metric_dict(evaluator, label_map)  # pyrefly: ignore[bad-argument-type]
     return metric_dict
 
   def export_saved_model(self,
