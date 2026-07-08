@@ -97,7 +97,7 @@ class ContextEncoder(tf.keras.layers.Layer):
         for k, v in input_context.items()
     }
     feature_group_embeddings = [
-        feature_group_encoder(input_context)
+        feature_group_encoder(input_context)  # pyrefly: ignore[not-callable]
         for feature_group_encoder in self._feature_group_encoders
     ]
     context_embedding = tf.concat(feature_group_embeddings, -1)
@@ -230,7 +230,7 @@ class FeatureGroupEncoder(tf.keras.layers.Layer):
         embedding = conv1d_layer(embedding)
       embedding = tf.math.reduce_max(embedding, axis=1)
     elif self._feature_group.encoder_type == input_config_pb2.EncoderType.LSTM:
-      embedding = self._lstm_layer(embedding)
+      embedding = self._lstm_layer(embedding)  # pyrefly: ignore[not-callable]
     else:
       raise ValueError('Unsupported encoder type %s.' %
                        self._feature_group.encoder_type)
