@@ -335,7 +335,7 @@ class COCOCallback(tf.keras.callbacks.Callback):
 
   @tf.function
   def _get_detections(self, images, labels):
-    cls_outputs, box_outputs = self.model(images, training=False)
+    cls_outputs, box_outputs = self.model(images, training=False)  # pyrefly: ignore[not-callable]
     detections = postprocess.generate_detections(self.config,
                                                  cls_outputs,
                                                  box_outputs,
@@ -389,7 +389,7 @@ class DisplayCallback(tf.keras.callbacks.Callback):
 
   def _draw_inference(self, step):
     self.model.__class__ = efficientdet_keras.EfficientDetModel
-    results = self.model(self.sample_image, training=False)
+    results = self.model(self.sample_image, training=False)  # pyrefly: ignore[not-callable]
     boxes, scores, classes, valid_len = tf.nest.map_structure(np.array, results)
     length = valid_len[0]
     image = inference.visualize_image(
@@ -435,16 +435,16 @@ def get_callbacks(params, val_dataset=None):
         log_dir=params['model_dir'],
         update_freq=params['steps_per_execution'],
         profile_batch=2 if params['profile'] else 0)
-    callbacks.append(tb_callback)
+    callbacks.append(tb_callback)  # pyrefly: ignore[bad-argument-type]
   if params.get('sample_image', None):
     display_callback = DisplayCallback(
         params.get('sample_image', None), params['model_dir'],
         params['img_summary_steps'])
-    callbacks.append(display_callback)
+    callbacks.append(display_callback)  # pyrefly: ignore[bad-argument-type]
   if (params.get('map_freq', None) and val_dataset and
       params['strategy'] != 'tpu'):
     coco_callback = COCOCallback(val_dataset, params['map_freq'])
-    callbacks.append(coco_callback)
+    callbacks.append(coco_callback)  # pyrefly: ignore[bad-argument-type]
   return callbacks
 
 
@@ -466,7 +466,7 @@ class AdversarialLoss(tf.keras.losses.Loss):
     self.tape = tape
     self.built = True
 
-  def call(self, features, y, y_pred, labeled_loss):
+  def call(self, features, y, y_pred, labeled_loss):  # pyrefly: ignore[bad-override]
     return self.adv_config.multiplier * nsl.keras.adversarial_loss(
         features,
         y,
@@ -554,7 +554,7 @@ class BoxLoss(tf.keras.losses.Loss):
     box_targets = tf.expand_dims(box_targets, axis=-1)
     box_outputs = tf.expand_dims(box_outputs, axis=-1)
     # TODO(fsx950223): remove cast when huber loss dtype is fixed.
-    box_loss = tf.cast(self.huber(box_targets, box_outputs),
+    box_loss = tf.cast(self.huber(box_targets, box_outputs),  # pyrefly: ignore[not-callable]
                        box_outputs.dtype) * mask
     box_loss = tf.reduce_sum(box_loss) / normalizer
     return box_loss
@@ -746,15 +746,15 @@ class EfficientDetNetTrain(efficientdet_keras.EfficientDetNet):
     with tf.GradientTape() as tape:
       if len(self.config.heads) == 2:
         cls_outputs, box_outputs, seg_outputs = util_keras.fp16_to_fp32_nested(
-            self(images, training=True))
+            self(images, training=True))  # pyrefly: ignore[not-callable]
         loss_dtype = cls_outputs[0].dtype
       elif 'object_detection' in self.config.heads:
         cls_outputs, box_outputs = util_keras.fp16_to_fp32_nested(
-            self(images, training=True))
+            self(images, training=True))  # pyrefly: ignore[not-callable]
         loss_dtype = cls_outputs[0].dtype
       elif 'segmentation' in self.config.heads:
         seg_outputs, = util_keras.fp16_to_fp32_nested(
-            self(images, training=True))
+            self(images, training=True))  # pyrefly: ignore[not-callable]
         loss_dtype = seg_outputs.dtype
       else:
         raise ValueError('No valid head found: {}'.format(self.config.heads))
@@ -763,13 +763,13 @@ class EfficientDetNetTrain(efficientdet_keras.EfficientDetNet):
       total_loss = 0
       loss_vals = {}
       if 'object_detection' in self.config.heads:
-        det_loss = self._detection_loss(cls_outputs, box_outputs, labels,
+        det_loss = self._detection_loss(cls_outputs, box_outputs, labels,  # pyrefly: ignore[unbound-name]
                                         loss_vals)
         total_loss += det_loss
       if 'segmentation' in self.config.heads:
         seg_loss_layer = (
             self.loss[tf.keras.losses.SparseCategoricalCrossentropy.__name__])
-        seg_loss = seg_loss_layer(labels['image_masks'], seg_outputs)
+        seg_loss = seg_loss_layer(labels['image_masks'], seg_outputs)  # pyrefly: ignore[unbound-name]
         total_loss += seg_loss
         loss_vals['seg_loss'] = seg_loss
 
@@ -823,15 +823,15 @@ class EfficientDetNetTrain(efficientdet_keras.EfficientDetNet):
     images, labels = data
     if len(self.config.heads) == 2:
       cls_outputs, box_outputs, seg_outputs = util_keras.fp16_to_fp32_nested(
-          self(images, training=False))
+          self(images, training=False))  # pyrefly: ignore[not-callable]
       loss_dtype = cls_outputs[0].dtype
     elif 'object_detection' in self.config.heads:
       cls_outputs, box_outputs = util_keras.fp16_to_fp32_nested(
-          self(images, training=False))
+          self(images, training=False))  # pyrefly: ignore[not-callable]
       loss_dtype = cls_outputs[0].dtype
     elif 'segmentation' in self.config.heads:
       seg_outputs, = util_keras.fp16_to_fp32_nested(
-          self(images, training=False))
+          self(images, training=False))  # pyrefly: ignore[not-callable]
       loss_dtype = seg_outputs.dtype
     else:
       raise ValueError('No valid head found: {}'.format(self.config.heads))
@@ -841,13 +841,13 @@ class EfficientDetNetTrain(efficientdet_keras.EfficientDetNet):
     total_loss = 0
     loss_vals = {}
     if 'object_detection' in self.config.heads:
-      det_loss = self._detection_loss(cls_outputs, box_outputs, labels,
+      det_loss = self._detection_loss(cls_outputs, box_outputs, labels,  # pyrefly: ignore[unbound-name]
                                       loss_vals)
       total_loss += det_loss
     if 'segmentation' in self.config.heads:
       seg_loss_layer = (
           self.loss[tf.keras.losses.SparseCategoricalCrossentropy.__name__])
-      seg_loss = seg_loss_layer(labels['image_masks'], seg_outputs)
+      seg_loss = seg_loss_layer(labels['image_masks'], seg_outputs)  # pyrefly: ignore[unbound-name]
       total_loss += seg_loss
       loss_vals['seg_loss'] = seg_loss
     reg_l2_loss = self._reg_l2_loss(self.config.weight_decay)

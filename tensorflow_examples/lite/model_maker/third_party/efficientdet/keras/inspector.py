@@ -84,7 +84,7 @@ def main(_):
   if tf.io.gfile.isdir(ckpt_path_or_file):
     ckpt_path_or_file = tf.train.latest_checkpoint(ckpt_path_or_file)
   driver = infer_lib.ServingDriver(FLAGS.model_name, ckpt_path_or_file,
-                                   FLAGS.batch_size or None,
+                                   FLAGS.batch_size or None,  # pyrefly: ignore[bad-argument-type]
                                    FLAGS.only_network, model_params)
   if FLAGS.mode == 'export':
     if not FLAGS.saved_model_dir:

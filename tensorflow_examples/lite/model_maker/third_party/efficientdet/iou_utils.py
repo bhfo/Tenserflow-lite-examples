@@ -68,8 +68,8 @@ def _iou_per_anchor(pred_boxes: FloatType,
     IoU loss float `Tensor`.
   """
   # t_ denotes target boxes and p_ denotes predicted boxes.
-  t_ymin, t_xmin, t_ymax, t_xmax = target_boxes
-  p_ymin, p_xmin, p_ymax, p_xmax = pred_boxes
+  t_ymin, t_xmin, t_ymax, t_xmax = target_boxes  # pyrefly: ignore[not-iterable]
+  p_ymin, p_xmin, p_ymax, p_xmax = pred_boxes  # pyrefly: ignore[not-iterable]
 
   zero = tf.convert_to_tensor(0.0, t_ymin.dtype)
   p_width = tf.maximum(zero, p_xmax - p_xmin)
@@ -190,8 +190,8 @@ def iou_loss(pred_boxes: FloatType,
     mask = tf.math.logical_and(t_ymax > t_ymin, t_xmax > t_xmin)
     mask = tf.cast(mask, t_ymin.dtype)
     # Loss should be mask * (1 - iou) = mask - masked_iou.
-    pred_boxes = [b * mask for b in pred_boxes]
-    target_boxes = [b * mask for b in target_boxes]
+    pred_boxes = [b * mask for b in pred_boxes]  # pyrefly: ignore[bad-assignment]
+    target_boxes = [b * mask for b in target_boxes]  # pyrefly: ignore[bad-assignment]
     iou_loss_list.append(
         mask *
         (1 - tf.squeeze(_iou_per_anchor(pred_boxes, target_boxes, iou_type))))  # pytype: disable=wrong-arg-types  # numpy-scalars

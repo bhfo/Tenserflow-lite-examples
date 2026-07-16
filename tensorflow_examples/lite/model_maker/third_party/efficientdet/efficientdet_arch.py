@@ -88,10 +88,10 @@ def resample_feature_map(feat,
       if apply_bn:
         feat = utils.batch_norm_act(
             feat,
-            is_training_bn=is_training,
+            is_training_bn=is_training,  # pyrefly: ignore[bad-argument-type]
             act_type=None,
             data_format=data_format,
-            strategy=strategy,
+            strategy=strategy,  # pyrefly: ignore[bad-argument-type]
             batch_norm_trainable=batch_norm_trainable,
             name='bn')
     return feat
@@ -175,7 +175,7 @@ def class_net(images,
         is_training,
         act_type=act_type,
         init_zero=False,
-        strategy=strategy,
+        strategy=strategy,  # pyrefly: ignore[bad-argument-type]
         data_format=data_format,
         name='class-%d-bn-%d' % (i, level))
 
@@ -232,7 +232,7 @@ def box_net(images,
         is_training,
         act_type=act_type,
         init_zero=False,
-        strategy=strategy,
+        strategy=strategy,  # pyrefly: ignore[bad-argument-type]
         data_format=data_format,
         name='box-%d-bn-%d' % (i, level))
 

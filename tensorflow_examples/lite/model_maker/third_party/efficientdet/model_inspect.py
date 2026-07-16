@@ -78,12 +78,12 @@ class ModelInspector(object):
   def __init__(self,
                model_name: Text,
                logdir: Text,
-               tensorrt: Text = False,
+               tensorrt: Text = False,  # pyrefly: ignore[bad-function-definition]
                use_xla: bool = False,
-               ckpt_path: Text = None,
-               export_ckpt: Text = None,
-               saved_model_dir: Text = None,
-               tflite_path: Text = None,
+               ckpt_path: Text = None,  # pyrefly: ignore[bad-function-definition]
+               export_ckpt: Text = None,  # pyrefly: ignore[bad-function-definition]
+               saved_model_dir: Text = None,  # pyrefly: ignore[bad-function-definition]
+               tflite_path: Text = None,  # pyrefly: ignore[bad-function-definition]
                batch_size: int = 1,
                hparams: Text = '',
                **kwargs):  # pytype: disable=annotation-type-mismatch
@@ -143,7 +143,7 @@ class ModelInspector(object):
     driver = inference.ServingDriver(
         self.model_name,
         self.ckpt_path,
-        batch_size=self.batch_size,
+        batch_size=self.batch_size,  # pyrefly: ignore[bad-argument-type]
         use_xla=self.use_xla,
         model_params=self.model_config.as_dict(),
         **kwargs)
@@ -155,7 +155,7 @@ class ModelInspector(object):
     driver = inference.ServingDriver(
         self.model_name,
         self.ckpt_path,
-        batch_size=self.batch_size,
+        batch_size=self.batch_size,  # pyrefly: ignore[bad-argument-type]
         use_xla=self.use_xla,
         model_params=self.model_config.as_dict(),
         **kwargs)
@@ -196,15 +196,15 @@ class ModelInspector(object):
     driver = inference.ServingDriver(
         self.model_name,
         self.ckpt_path,
-        batch_size=self.batch_size,
+        batch_size=self.batch_size,  # pyrefly: ignore[bad-argument-type]
         use_xla=self.use_xla,
         model_params=self.model_config.as_dict(),
         **kwargs)
     driver.load(self.saved_model_dir)
     raw_images = []
     all_files = list(tf.io.gfile.glob(image_path_pattern))
-    if len(all_files) < self.batch_size:
-      all_files = all_files * (self.batch_size // len(all_files) + 1)
+    if len(all_files) < self.batch_size:  # pyrefly: ignore[unsupported-operation]
+      all_files = all_files * (self.batch_size // len(all_files) + 1)  # pyrefly: ignore[unsupported-operation]
     raw_images = [np.array(Image.open(f)) for f in all_files[:self.batch_size]]
     driver.benchmark(raw_images, trace_filename)
 
@@ -377,7 +377,7 @@ class ModelInspector(object):
       sess.run(tf.global_variables_initializer())
       if self.tensorrt:
         fetches = [inputs.name] + [i.name for i in output]
-        goutput = self.convert_tr(graphdef, fetches)
+        goutput = self.convert_tr(graphdef, fetches)  # pyrefly: ignore[unbound-name]
         inputs, output = goutput[0], goutput[1:]
 
       if not self.use_xla:

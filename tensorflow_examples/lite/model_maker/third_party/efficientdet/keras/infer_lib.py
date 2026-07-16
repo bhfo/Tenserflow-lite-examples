@@ -413,13 +413,13 @@ class ServingDriver:
       else:
         raise ValueError(f'Invalid tflite {tflite}: must be FP32, FP16, INT8.')
 
-      tflite_path = os.path.join(output_dir, tflite.lower() + '.tflite')
+      tflite_path = os.path.join(output_dir, tflite.lower() + '.tflite')  # pyrefly: ignore[no-matching-overload]
       tflite_model = converter.convert()
       tf.io.gfile.GFile(tflite_path, 'wb').write(tflite_model)
       logging.info('TFLite is saved at %s', tflite_path)
 
     if tensorrt:
-      trt_path = os.path.join(output_dir, 'tensorrt_' + tensorrt.lower())
+      trt_path = os.path.join(output_dir, 'tensorrt_' + tensorrt.lower())  # pyrefly: ignore[no-matching-overload]
       conversion_params = tf.experimental.tensorrt.ConversionParams(
           max_workspace_size_bytes=(2 << 20),
           maximum_cached_engines=1,
